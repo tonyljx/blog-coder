@@ -18,7 +18,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 export function meta({ data }: Route.MetaArgs) {
   if (!data) return [{ title: "Post not found" }];
   return [
-    { title: `${data.post.title} – Manu Arora` },
+    { title: `${data.post.title} – Tony Liang` },
     { name: "description", content: data.post.summary },
   ];
 }

@@ -5,7 +5,7 @@ import { Subheading } from "~/components/subheading";
 import { formatPostDate } from "~/lib/format-post-date";
 import { getAllPosts } from "~/lib/posts";
 
-export const meta: MetaFunction = () => [{ title: "Blog – Manu Arora" }];
+export const meta: MetaFunction = () => [{ title: "Blog – Tony Liang" }];
 
 export default function Blog() {
   const posts = getAllPosts();

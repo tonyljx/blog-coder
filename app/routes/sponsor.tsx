@@ -1,7 +1,7 @@
 import type { MetaFunction } from "react-router";
 import { PlaceholderPage } from "~/components/placeholder-page";
 
-export const meta: MetaFunction = () => [{ title: "Sponsor – Manu Arora" }];
+export const meta: MetaFunction = () => [{ title: "Sponsor – Tony Liang" }];
 
 export default function Sponsor() {
   return (

@@ -9,7 +9,7 @@ import { WorkWithMe } from "~/components/work-with-me";
 import { getAllPosts } from "~/lib/posts";
 
 export const meta: MetaFunction = () => [
-  { title: "Manu Arora" },
+  { title: "Tony Liang" },
   {
     name: "description",
     content:

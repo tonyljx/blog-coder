@@ -1,7 +1,7 @@
 import type { MetaFunction } from "react-router";
 import { PlaceholderPage } from "~/components/placeholder-page";
 
-export const meta: MetaFunction = () => [{ title: "Tweets – Manu Arora" }];
+export const meta: MetaFunction = () => [{ title: "Tweets – Tony Liang" }];
 
 export default function Tweets() {
   return (

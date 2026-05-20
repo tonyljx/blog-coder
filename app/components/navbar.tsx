@@ -38,8 +38,8 @@ export const Navbar = () => {
           />
         </motion.div>
         <h1 className="text-foreground text-xl font-medium tracking-tight md:text-2xl">
-          Manu Arora <span className="text-foreground/50 font-normal">aka</span>{" "}
-          <span className="font-normal italic">Paaji</span>
+          Tony Liang <span className="text-foreground/50 font-normal">Aka</span>{" "}
+          <span className="font-normal italic">RunningDog</span>
         </h1>
       </div>
       <div className="flex items-center gap-4">
