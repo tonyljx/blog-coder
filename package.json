@@ -8,7 +8,7 @@
     "dev": "react-router dev",
     "build": "react-router build",
     "preview": "npm run build && wrangler dev",
-    "deploy": "npm run build && wrangler deploy",
+    "deploy": "wrangler deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv ./worker-configuration.d.ts",
     "typecheck": "npm run cf-typegen && react-router typegen && tsc --noEmit"
   },
