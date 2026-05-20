@@ -38,19 +38,28 @@ function MdxLink({
 export const mdxComponents: MDXComponents = {
   h1: ({ className, ...props }) => (
     <h2
-      className={cn("text-foreground mt-10 text-xl font-medium", className)}
+      className={cn(
+        "text-foreground mt-10 scroll-mt-24 text-xl font-medium",
+        className,
+      )}
       {...props}
     />
   ),
   h2: ({ className, ...props }) => (
     <h2
-      className={cn("text-foreground mt-10 text-xl font-medium", className)}
+      className={cn(
+        "text-foreground mt-10 scroll-mt-24 text-xl font-medium",
+        className,
+      )}
       {...props}
     />
   ),
   h3: ({ className, ...props }) => (
     <h3
-      className={cn("text-foreground mt-8 text-lg font-medium", className)}
+      className={cn(
+        "text-foreground mt-8 scroll-mt-24 text-lg font-medium",
+        className,
+      )}
       {...props}
     />
   ),
@@ -154,5 +163,9 @@ export const mdxComponents: MDXComponents = {
 };
 
 export function MdxContent({ children }: { children: ReactNode }) {
-  return <article className="mt-8 flex flex-col gap-5">{children}</article>;
+  return (
+    <article data-mdx-content className="mt-8 flex flex-col gap-5">
+      {children}
+    </article>
+  );
 }
