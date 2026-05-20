@@ -1,0 +1,153 @@
+---
+title: "AI SDK + DeepSeek：最小流式聊天接入指南"
+publishedAt: "2026-05-21"
+summary: "用 AI SDK 的 streamText、useChat 和 DeepSeek provider 搭一个最小可用的 Next.js App Router 流式聊天接口。"
+---
+
+这篇笔记记录一个最小可用的 AI SDK 聊天接入方式：服务端负责把 UI 消息转成模型消息并发起流式生成，客户端负责维护输入框、消息列表和发送动作。
+
+出处是 [AI SDK 的 Next.js App Router quickstart](https://ai-sdk.dev/docs/getting-started/nextjs-app-router)，这里把模型 provider 换成 DeepSeek。
+
+## 安装依赖
+
+如果你用 Next.js App Router，可以先装这几个包：
+
+```bash
+npm install ai @ai-sdk/react @ai-sdk/deepseek
+```
+
+然后在 `.env.local` 里放 DeepSeek API key：
+
+```bash
+DEEPSEEK_API_KEY=your_deepseek_api_key
+```
+
+`ai` 是核心 SDK，提供 `streamText`、`UIMessage` 和 `convertToModelMessages`。`@ai-sdk/react` 提供客户端 hook，`@ai-sdk/deepseek` 负责把 DeepSeek 模型接进 AI SDK 的统一模型接口。
+
+## 服务端 Route Handler
+
+在 `app/api/chat/route.ts` 里写一个 `POST` handler：
+
+```ts
+import { streamText, UIMessage, convertToModelMessages } from "ai";
+import { createDeepSeek } from "@ai-sdk/deepseek";
+
+const deepseek = createDeepSeek({
+  apiKey: process.env.DEEPSEEK_API_KEY ?? "",
+});
+
+export async function POST(req: Request) {
+  const { messages }: { messages: UIMessage[] } = await req.json();
+
+  const result = streamText({
+    model: deepseek("deepseek-chat"),
+    messages: await convertToModelMessages(messages),
+  });
+
+  return result.toUIMessageStreamResponse();
+}
+```
+
+这里有几个关键点：
+
+- `messages` 来自客户端 `useChat`，类型是 `UIMessage[]`。
+- 模型不直接吃 `UIMessage[]`，所以要用 `convertToModelMessages(messages)` 转成模型侧需要的消息格式。
+- `streamText` 返回的是流式生成结果。
+- `toUIMessageStreamResponse()` 会把服务端结果包装成客户端 `useChat` 能消费的 UI message stream。
+
+如果你部署在有请求时长限制的平台，也可以按官方示例加上：
+
+```ts
+export const maxDuration = 30;
+```
+
+## 客户端页面
+
+客户端组件里用 `useChat` 管消息状态和发送动作：
+
+```tsx
+"use client";
+
+import { useState } from "react";
+import { useChat } from "@ai-sdk/react";
+
+export default function Page() {
+  const [input, setInput] = useState("");
+
+  const { messages, sendMessage } = useChat();
+
+  return (
+    <div className="stretch mx-auto flex w-full max-w-md flex-col py-24">
+      {messages.map((message) => (
+        <div key={message.id} className="whitespace-pre-wrap">
+          {message.role === "user" ? "User: " : "AI: "}
+          {message.parts.map((part, i) => {
+            switch (part.type) {
+              case "text":
+                return <div key={`${message.id}-${i}`}>{part.text}</div>;
+            }
+          })}
+        </div>
+      ))}
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          sendMessage({ text: input });
+          setInput("");
+        }}
+      >
+        <input
+          className="fixed bottom-0 mb-8 w-full max-w-md rounded border border-zinc-300 p-2 shadow-xl dark:border-zinc-800 dark:bg-zinc-900"
+          value={input}
+          placeholder="Say something..."
+          onChange={(e) => setInput(e.currentTarget.value)}
+        />
+      </form>
+    </div>
+  );
+}
+```
+
+这个组件必须加 `"use client"`，因为它用了 `useState` 和 `useChat`。默认情况下，`useChat()` 会把消息发到 `/api/chat`，也就是上面的 route handler。
+
+## 数据流
+
+这条链路可以按四步理解：
+
+1. 用户提交输入，客户端调用 `sendMessage({ text: input })`。
+2. `useChat` 把当前对话历史发送给 `/api/chat`。
+3. 服务端把 `UIMessage[]` 转成模型消息，然后调用 `streamText`。
+4. 服务端返回 UI message stream，客户端边收到边更新 `messages`。
+
+`message.parts` 是 AI SDK UI 里很重要的结构。最简单的文本回复会出现在 `part.type === "text"` 的 part 里；以后如果你加工具调用、reasoning 或自定义 data part，也会继续从 `parts` 里渲染。
+
+## DeepSeek provider 的位置
+
+这段代码用了 `createDeepSeek`：
+
+```ts
+const deepseek = createDeepSeek({
+  apiKey: process.env.DEEPSEEK_API_KEY ?? "",
+});
+```
+
+如果只用默认环境变量，也可以直接用 provider 暴露的默认实例；但我更喜欢显式创建 provider，因为项目里以后可能会出现多个 key、base URL 或 fetch 配置。显式 provider 更容易迁移和测试。
+
+模型这里用：
+
+```ts
+model: deepseek("deepseek-chat");
+```
+
+如果你要接推理模型，可以再看 DeepSeek provider 支持的 `deepseek-reasoner`，但普通聊天、总结、代码问答先用 `deepseek-chat` 就够了。
+
+## 我会保留的最小边界
+
+先不要急着加数据库、会话持久化和复杂 UI。最小版本只需要确认三件事：
+
+- 服务端 route 能正常返回流式响应。
+- 客户端能用 `useChat` 收到增量文本。
+- API key 只存在服务端环境变量里，不暴露给浏览器。
+
+这条链路跑通以后，再加消息持久化、system prompt、工具调用、错误状态和 loading 状态，会更稳。
