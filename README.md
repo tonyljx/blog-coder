@@ -1,0 +1,63 @@
+# Minimalist Portfolio
+
+一个极简风格的个人作品集 / 博客网站，用 **Vite + React Router v7（框架模式 / SSR）** 构建，**Tailwind CSS v4** 负责样式，部署在 **Cloudflare Workers** 上。
+
+设计复刻自 [manuarora.in](https://manuarora.in) 的 Minimalist Portfolio 模板，但工程架构改用 React Router + Vite，而非原项目的 Next.js。
+
+## 技术栈
+
+| 类别 | 选型 |
+| --- | --- |
+| 框架 | React 19 + React Router v7（框架模式，开启 SSR） |
+| 构建 | Vite 8 |
+| 样式 | Tailwind CSS v4（`@tailwindcss/vite`，oklch 设计令牌） |
+| 动画 | `motion`（Framer Motion） |
+| 图标 | `@tabler/icons-react` + 内联 SVG |
+| 部署 | Cloudflare Workers（`wrangler`） |
+| 字体 | Schibsted Grotesk / Geist / Geist Mono / Inter（Google Fonts） |
+
+## 功能
+
+- **主页**：自我介绍、Things I do、合作过的公司、Work with me（含点击复制邮箱的动画提示）、最新文章列表、带签名手写动画的页脚。
+- **博客**：`/blog` 列表页 + `/blog/:slug` 详情页。文章通过服务端 `loader` 加载，未知 slug 会返回 404。
+- **导航**：当前路由高亮（虚线下划线），其余页面（Tweets / Inspiration / Sponsor）目前为占位页。
+- **SSR**：所有页面服务端渲染，首屏直出 HTML，利于 SEO。
+
+## 目录结构
+
+```
+app/
+├── root.tsx              # 根布局：字体加载、Navbar + Outlet + Footer、错误边界
+├── routes.ts             # 路由配置
+├── app.css               # Tailwind v4 入口 + 设计令牌（含暗色变量）
+├── entry.server.tsx      # SSR 渲染入口
+├── routes/               # 页面：home / blog / blog-detail / tweets / inspiration / sponsor
+├── components/           # UI 组件：navbar、footer、work、companies、work-with-me 等
+└── lib/                  # 工具与数据：posts（文章数据）、utils、motion-config、format-post-date
+workers/app.ts            # Cloudflare Workers 请求处理入口
+wrangler.jsonc            # Cloudflare 部署配置
+vite.config.ts            # Vite + cloudflareDevProxy + tailwindcss + reactRouter
+```
+
+> 路径别名 `~` 指向 `app/`，例如 `import { cn } from "~/lib/utils"`。
+
+## 本地开发
+
+```bash
+npm install        # 安装依赖
+npm run dev        # 启动开发服务器（默认 http://localhost:5173）
+npm run typecheck  # 类型检查（cf-typegen + react-router typegen + tsc）
+npm run build      # 生产构建，产出 build/client 与 build/server
+```
+
+## 部署到 Cloudflare Workers
+
+```bash
+npm run preview    # 本地用 wrangler 跑 Workers 运行时预览
+npm run deploy     # 构建并部署到 Cloudflare Workers
+```
+
+## 关于文章内容
+
+`app/lib/posts.ts` 当前用一个类型化的静态数组承载文章数据（`summary` + 结构化的 `content` 区块），均为**占位内容**。
+后续要接入真实文章时，可平滑替换为 MDX —— `/blog/:slug` 的路由与 loader 结构无需改动。
