@@ -1,28 +1,38 @@
 import { Subheading } from "./subheading";
 import { Box } from "./box";
+import {
+  ClaudeAiIcon,
+  JavaIcon,
+  OpenAiIcon,
+  TypeScriptIcon,
+  VSCodeIcon,
+} from "./icons/tech-stack";
 
 export const Companies = () => {
   const tools = [
     {
       title: "Claude Code",
       description: "用来做代码理解、重构和长链路实现。",
-      label: "CC",
+      icon: ClaudeAiIcon,
       boxClassName:
-        "bg-linear-to-b from-stone-400 to-stone-700 ring-offset-stone-500",
+        "bg-linear-to-b from-[#fff7f2] to-[#f2ddd4] ring-offset-[#D97757]",
+      iconClassName: "size-5",
     },
     {
       title: "Codex",
       description: "日常用来快速实现想法、部署和检查工程细节。",
-      label: "CX",
+      icon: OpenAiIcon,
       boxClassName:
-        "bg-linear-to-b from-sky-400 to-sky-700 ring-offset-sky-500",
+        "bg-linear-to-b from-zinc-900 to-zinc-700 text-white ring-offset-zinc-500",
+      iconClassName: "size-5",
     },
     {
       title: "VS Code",
       description: "稳定的主力编辑器，适合长时间写代码和调试。",
-      label: "VS",
+      icon: VSCodeIcon,
       boxClassName:
-        "bg-linear-to-b from-blue-400 to-blue-700 ring-offset-blue-500",
+        "bg-linear-to-b from-sky-50 to-blue-100 ring-offset-[#007ACC]",
+      iconClassName: "size-5",
     },
   ];
 
@@ -30,16 +40,18 @@ export const Companies = () => {
     {
       title: "JS / TS",
       description: "主要用来写前端、脚本、Worker 和一些全栈小项目。",
-      label: "TS",
+      icon: TypeScriptIcon,
       boxClassName:
-        "bg-linear-to-b from-cyan-400 to-cyan-700 ring-offset-cyan-500",
+        "bg-linear-to-b from-sky-50 to-blue-100 ring-offset-[#3178C6]",
+      iconClassName: "size-5 rounded-[2px]",
     },
     {
       title: "Java",
       description: "后端工程里的稳定底座，适合做服务、业务系统和长期维护。",
-      label: "JV",
+      icon: JavaIcon,
       boxClassName:
-        "bg-linear-to-b from-orange-400 to-red-600 ring-offset-orange-500",
+        "bg-linear-to-b from-orange-50 to-sky-50 ring-offset-[#E76F00]",
+      iconClassName: "h-6 w-5",
     },
   ];
 
@@ -58,23 +70,28 @@ export const Companies = () => {
               {group.title}
             </p>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              {group.items.map((item) => (
-                <div key={item.title} className="flex flex-col gap-3">
-                  <div className="flex items-center gap-2">
-                    <Box className={item.boxClassName}>
-                      <span className="text-[10px] font-semibold text-white drop-shadow-sm">
-                        {item.label}
-                      </span>
-                    </Box>
-                    <p className="text-foreground text-sm font-medium">
-                      {item.title}
+              {group.items.map((item) => {
+                const Icon = item.icon;
+
+                return (
+                  <div key={item.title} className="flex flex-col gap-3">
+                    <div className="flex items-center gap-2">
+                      <Box className={item.boxClassName}>
+                        <Icon
+                          aria-hidden="true"
+                          className={item.iconClassName}
+                        />
+                      </Box>
+                      <p className="text-foreground text-sm font-medium">
+                        {item.title}
+                      </p>
+                    </div>
+                    <p className="text-foreground/70 text-sm text-pretty">
+                      {item.description}
                     </p>
                   </div>
-                  <p className="text-foreground/70 text-sm text-pretty">
-                    {item.description}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))}
