@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import mdx from "@mdx-js/rollup";
 import { reactRouter } from "@react-router/dev/vite";
 import { cloudflareDevProxy } from "@react-router/dev/vite/cloudflare";
+import rehypeShiki from "@shikijs/rehype";
 import tailwindcss from "@tailwindcss/vite";
 import remarkFrontmatter from "remark-frontmatter";
 import remarkMdxFrontmatter from "remark-mdx-frontmatter";
@@ -17,6 +18,18 @@ export default defineConfig({
         remarkPlugins: [
           remarkFrontmatter,
           [remarkMdxFrontmatter, { name: "frontmatter" }],
+        ],
+        rehypePlugins: [
+          [
+            rehypeShiki,
+            {
+              themes: {
+                light: "github-light",
+                dark: "github-dark",
+              },
+              defaultColor: "light",
+            },
+          ],
         ],
       }),
     },

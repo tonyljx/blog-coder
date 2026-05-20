@@ -91,15 +91,24 @@ export const mdxComponents: MDXComponents = {
       {...props}
     />
   ),
-  code: ({ className, ...props }) => (
-    <code
-      className={cn(
-        "bg-muted text-foreground rounded-sm px-1 py-0.5 font-mono text-[0.88em]",
-        className,
-      )}
-      {...props}
-    />
-  ),
+  code: ({ className, children, ...props }) => {
+    const isBlockCode =
+      className?.includes("language-") || typeof children !== "string";
+
+    return (
+      <code
+        className={cn(
+          isBlockCode
+            ? "font-mono"
+            : "bg-muted text-foreground rounded-sm px-1 py-0.5 font-mono text-[0.88em]",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </code>
+    );
+  },
   pre: ({ className, ...props }) => (
     <pre
       className={cn(

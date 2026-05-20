@@ -15,6 +15,24 @@ Get comfortable explaining these out loud and most questions become variations o
 - `this`: how it is decided at call time, not at definition time.
 - Prototypes: what really happens on a property lookup.
 
+For example, a closure is not magic. The returned function still has access to the lexical scope where it was created:
+
+```ts
+function createCounter(start = 0) {
+  let value = start;
+
+  return function increment() {
+    value += 1;
+    return value;
+  };
+}
+
+const next = createCounter(10);
+
+console.log(next()); // 11
+console.log(next()); // 12
+```
+
 Practice narrating your reasoning, not just reciting the answer. An interviewer learns far more from "here is how I would reason about it" than from a memorized definition.
 
 Placeholder article: the full write-up with runnable examples is coming soon.
