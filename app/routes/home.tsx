@@ -12,7 +12,8 @@ export const meta: MetaFunction = () => [
   { title: "Manu Arora" },
   {
     name: "description",
-    content: "Founder, Creator, YouTuber, Shitposter, and a Learner.",
+    content:
+      "Engineer, backend developer who enjoys writing frontend and building interesting tools.",
   },
 ];
 
