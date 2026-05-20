@@ -1,0 +1,21 @@
+---
+title: "How I'd build a Medium-style blog with React Router"
+publishedAt: "2025-12-22"
+summary: "A tour of the moving parts behind a small publishing platform: routing, content loading, and rendering, without reaching for a heavy framework."
+---
+
+You do not need a CMS to publish writing on the web. With React Router's framework mode you get server rendering, nested routes, and data loaders out of the box, which is most of what a blogging platform needs.
+
+## The three pieces
+
+- A route that lists posts, like this site's `/blog` index.
+- A dynamic `/blog/:slug` route with a loader that fetches one post.
+- A content source. Start with MDX files and keep the route shape stable.
+
+Because the loader runs on the server, the reader gets fully-rendered HTML and search engines see real content.
+
+MDX keeps authoring close to normal Markdown while still letting you drop in React components when a post needs something richer than prose.
+
+> The important part is the boundary: writers edit files in `content/blog`, and the app decides how those files should look.
+
+This post is a placeholder while the real implementation notes get written up.

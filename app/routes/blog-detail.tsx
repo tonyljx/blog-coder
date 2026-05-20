@@ -1,15 +1,18 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/blog-detail";
 import Container from "~/components/container";
+import { MdxContent, mdxComponents } from "~/components/mdx-content";
 import { formatPostDate } from "~/lib/format-post-date";
-import { getPostBySlug, type ContentBlock } from "~/lib/posts";
+import { getPostBySlug } from "~/lib/posts";
 
 export async function loader({ params }: Route.LoaderArgs) {
   const post = getPostBySlug(params.slug);
   if (!post) {
     throw new Response("Not Found", { status: 404 });
   }
-  return { post };
+
+  const { Component: _Component, ...postMeta } = post;
+  return { post: postMeta };
 }
 
 export function meta({ data }: Route.MetaArgs) {
@@ -20,29 +23,14 @@ export function meta({ data }: Route.MetaArgs) {
   ];
 }
 
-function Block({ block }: { block: ContentBlock }) {
-  switch (block.type) {
-    case "h2":
-      return (
-        <h2 className="text-foreground mt-8 text-lg font-medium tracking-tight">
-          {block.text}
-        </h2>
-      );
-    case "ul":
-      return (
-        <ul className="text-foreground/70 list-disc space-y-1.5 pl-5 text-base">
-          {block.items.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      );
-    default:
-      return <p className="text-foreground/80 text-base">{block.text}</p>;
-  }
-}
-
 export default function BlogDetail({ loaderData }: Route.ComponentProps) {
-  const { post } = loaderData;
+  const post = getPostBySlug(loaderData.post.slug);
+
+  if (!post) {
+    throw new Response("Not Found", { status: 404 });
+  }
+
+  const PostContent = post.Component;
 
   return (
     <Container className="pt-6">
@@ -61,11 +49,9 @@ export default function BlogDetail({ loaderData }: Route.ComponentProps) {
       <p className="text-foreground/60 mt-4 text-base text-balance italic">
         {post.summary}
       </p>
-      <article className="mt-8 flex flex-col gap-4">
-        {post.content.map((block, index) => (
-          <Block key={index} block={block} />
-        ))}
-      </article>
+      <MdxContent>
+        <PostContent components={mdxComponents} />
+      </MdxContent>
     </Container>
   );
 }
