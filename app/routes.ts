@@ -5,5 +5,6 @@ export default [
   route("tweets", "routes/tweets.tsx"),
   route("inspiration", "routes/inspiration.tsx"),
   route("blog", "routes/blog.tsx"),
+  route("blog/:slug", "routes/blog-detail.tsx"),
   route("sponsor", "routes/sponsor.tsx"),
 ] satisfies RouteConfig;

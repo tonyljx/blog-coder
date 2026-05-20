@@ -29,3 +29,7 @@ export function getAllPosts(): BlogPost[] {
       new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
   );
 }
+
+export function getPostBySlug(slug: string): BlogPost | undefined {
+  return posts.find((post) => post.slug === slug);
+}
