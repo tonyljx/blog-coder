@@ -13,18 +13,23 @@ export default function Blog() {
   return (
     <Container className="pt-6">
       <Subheading>Writing</Subheading>
-      <div className="mt-4 flex flex-col gap-4">
+      <div className="mt-4 flex flex-col gap-6">
         {posts.map((post) => (
           <Link
             to={`/blog/${post.slug}`}
             key={post.slug}
-            className="group flex items-center justify-between gap-20 transition-colors duration-200"
+            className="group flex flex-col gap-1"
           >
-            <span className="text-foreground group-hover:text-primary truncate">
-              {post.title}
-            </span>
-            <span className="text-foreground/50 group-hover:text-primary shrink-0 font-mono text-xs font-light">
-              {formatPostDate(post.publishedAt)}
+            <div className="flex items-baseline justify-between gap-6">
+              <span className="text-foreground group-hover:text-primary font-medium">
+                {post.title}
+              </span>
+              <span className="text-foreground/50 group-hover:text-primary shrink-0 font-mono text-xs font-light">
+                {formatPostDate(post.publishedAt)}
+              </span>
+            </div>
+            <span className="text-foreground/60 text-sm text-balance">
+              {post.summary}
             </span>
           </Link>
         ))}
