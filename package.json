@@ -1,0 +1,36 @@
+{
+  "name": "minimalist-portfolio",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Vite + React Router minimalist portfolio, deployed on Cloudflare Workers.",
+  "type": "module",
+  "scripts": {
+    "dev": "react-router dev",
+    "build": "react-router build",
+    "preview": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "cf-typegen": "wrangler types --env-interface CloudflareEnv ./worker-configuration.d.ts",
+    "typecheck": "npm run cf-typegen && react-router typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@cloudflare/vite-plugin": "^1.33.0",
+    "@tabler/icons-react": "^3.41.1",
+    "clsx": "^2.1.1",
+    "motion": "^12.38.0",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-router": "^7.14.1",
+    "tailwind-merge": "^2.5.4"
+  },
+  "devDependencies": {
+    "@react-router/dev": "^7.14.1",
+    "@tailwindcss/vite": "^4.2.1",
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "tailwindcss": "^4.2.1",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.9",
+    "wrangler": "^4.84.0"
+  }
+}
