@@ -81,6 +81,7 @@ export function ErrorBoundary({ error }: { error: unknown }) {
       <p className="text-foreground/70">{detail}</p>
       <Link
         to="/"
+        viewTransition
         className="text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
       >
         Back to home

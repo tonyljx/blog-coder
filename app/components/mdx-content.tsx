@@ -21,7 +21,14 @@ function MdxLink({
   );
 
   if (isInternalLink(href)) {
-    return <Link to={href ?? "/"} className={linkClassName} {...props} />;
+    return (
+      <Link
+        to={href ?? "/"}
+        viewTransition
+        className={linkClassName}
+        {...props}
+      />
+    );
   }
 
   return (

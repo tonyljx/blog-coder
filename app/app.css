@@ -7,6 +7,37 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: route-fade-out 140ms cubic-bezier(0.25, 1, 0.5, 1) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: route-fade-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+@keyframes route-fade-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes route-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
 :root {
   /* Font families (loaded via Google Fonts <link> in root.tsx) */
   --font-schibsted-grotesk: "Schibsted Grotesk", ui-sans-serif, system-ui, sans-serif;

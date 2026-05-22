@@ -39,6 +39,7 @@ export default function BlogDetail({ loaderData }: Route.ComponentProps) {
         <div className="min-w-0">
           <Link
             to="/blog"
+            viewTransition
             className="text-foreground/50 hover:text-primary font-mono text-xs tracking-wide uppercase transition-colors"
           >
             ← Writing

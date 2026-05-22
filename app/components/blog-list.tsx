@@ -11,6 +11,7 @@ export const BlogList = ({ posts }: { posts: BlogPostMeta[] }) => {
         <Link
           to={`/blog/${post.slug}`}
           key={post.slug}
+          viewTransition
           className="group flex items-center justify-between gap-20 transition-colors duration-200 md:gap-20"
         >
           <span className="text-foreground group-hover:text-primary truncate">

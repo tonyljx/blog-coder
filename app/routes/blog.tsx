@@ -18,6 +18,7 @@ export default function Blog() {
           <Link
             to={`/blog/${post.slug}`}
             key={post.slug}
+            viewTransition
             className="group flex flex-col gap-1"
           >
             <div className="flex items-baseline justify-between gap-6">

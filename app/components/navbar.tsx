@@ -49,6 +49,7 @@ export const Navbar = () => {
             <Link
               key={link.href}
               to={link.href}
+              viewTransition
               className={cn(
                 "group relative transition-colors",
                 active ? "text-primary" : "text-foreground/70 hover:text-primary",
