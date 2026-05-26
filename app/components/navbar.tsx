@@ -31,8 +31,8 @@ export const Navbar = () => {
           className="rounded-md bg-white shadow-md dark:bg-neutral-800"
         >
           <img
-            src="https://assets.aceternity.com/avatars/manu.webp"
-            alt=""
+            src="/pig-avatar.png"
+            alt="Cute pig avatar"
             width={40}
             height={40}
             className="aspect-square size-6 rounded-md shadow-2xl"
