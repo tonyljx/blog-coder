@@ -1,11 +1,11 @@
-import { IconListDetails } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "~/lib/utils";
 
 type TocItem = {
   id: string;
   text: string;
-  depth: 2 | 3;
+  depth: 2 | 3 | 4;
+  children: TocItem[];
 };
 
 function slugifyHeading(text: string, index: number) {
@@ -32,7 +32,7 @@ function collectHeadings(selector: string) {
 
   const seen = new Map<string, number>();
   const headings = Array.from(
-    article.querySelectorAll<HTMLHeadingElement>("h2, h3"),
+    article.querySelectorAll<HTMLHeadingElement>("h2, h3, h4"),
   );
 
   return headings
@@ -46,10 +46,35 @@ function collectHeadings(selector: string) {
       return {
         id,
         text,
-        depth: Number(heading.tagName.slice(1)) as 2 | 3,
+        depth: Number(heading.tagName.slice(1)) as 2 | 3 | 4,
+        children: [],
       };
     })
     .filter((item): item is TocItem => Boolean(item));
+}
+
+function buildTree(items: TocItem[]) {
+  const result: TocItem[] = [];
+  const stack: TocItem[] = [];
+
+  for (const item of items) {
+    const node = { ...item, children: [] };
+
+    while (stack.length > 0 && stack[stack.length - 1].depth >= node.depth) {
+      stack.pop();
+    }
+
+    const parent = stack[stack.length - 1];
+    if (parent) {
+      parent.children.push(node);
+    } else {
+      result.push(node);
+    }
+
+    stack.push(node);
+  }
+
+  return result;
 }
 
 export function TableOfContents({
@@ -59,52 +84,65 @@ export function TableOfContents({
 }) {
   const [items, setItems] = useState<TocItem[]>([]);
   const [activeId, setActiveId] = useState<string>();
-  const [progress, setProgress] = useState(0);
+  const [markerTop, setMarkerTop] = useState(32);
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const nextItems = collectHeadings(contentSelector);
+    const flatItems = collectHeadings(contentSelector);
+    const nextItems = buildTree(flatItems);
     setItems(nextItems);
-    setActiveId(nextItems[0]?.id);
+    setActiveId(flatItems[0]?.id);
 
-    if (nextItems.length === 0) return;
+    if (flatItems.length === 0) return;
 
     const updateActiveHeading = () => {
-      const article = document.querySelector<HTMLElement>(contentSelector);
-      const headings = nextItems
+      const headings = flatItems
         .map((item) => document.getElementById(item.id))
         .filter((heading): heading is HTMLElement => Boolean(heading));
 
-      const anchorOffset = 128;
-      const current =
-        headings
-          .filter(
-            (heading) =>
-              heading.getBoundingClientRect().top - anchorOffset <= 0,
-          )
-          .at(-1) ?? headings[0];
+      if (headings.length === 0) return;
+
+      const isBottom =
+        Math.abs(
+          window.scrollY + window.innerHeight - document.body.offsetHeight,
+        ) < 2;
+      const anchorOffset = 112;
+      const current = isBottom
+        ? headings[headings.length - 1]
+        : headings
+            .filter(
+              (heading) =>
+                heading.getBoundingClientRect().top - anchorOffset <= 0,
+            )
+            .at(-1) ?? headings[0];
+
+      const link = Array.from(
+        navRef.current?.querySelectorAll<HTMLAnchorElement>("a") ?? [],
+      ).find((anchor) => anchor.getAttribute("href") === `#${current.id}`);
 
       setActiveId(current.id);
-
-      if (article) {
-        const articleTop = article.getBoundingClientRect().top + window.scrollY;
-        const readableHeight = Math.max(
-          article.scrollHeight - window.innerHeight * 0.45,
-          1,
-        );
-        const scrolled = window.scrollY + anchorOffset - articleTop;
-        setProgress(
-          Math.min(100, Math.max(0, (scrolled / readableHeight) * 100)),
-        );
+      if (link && navRef.current) {
+        const linkRect = link.getBoundingClientRect();
+        const navRect = navRef.current.getBoundingClientRect();
+        setMarkerTop(linkRect.top - navRect.top + linkRect.height / 2 - 9);
       }
     };
 
-    updateActiveHeading();
-    window.addEventListener("scroll", updateActiveHeading, { passive: true });
-    window.addEventListener("resize", updateActiveHeading);
+    let frame = 0;
+    const scheduleUpdate = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(updateActiveHeading);
+    };
+
+    const initialUpdate = window.setTimeout(scheduleUpdate, 0);
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate);
 
     return () => {
-      window.removeEventListener("scroll", updateActiveHeading);
-      window.removeEventListener("resize", updateActiveHeading);
+      window.clearTimeout(initialUpdate);
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
     };
   }, [contentSelector]);
 
@@ -112,60 +150,73 @@ export function TableOfContents({
 
   return (
     <aside className="hidden xl:block xl:self-stretch">
-      <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-hidden pl-2">
-        <div className="text-foreground/70 mb-4 flex items-center gap-2 text-sm font-medium">
-          <IconListDetails className="size-4" aria-hidden="true" />
-          <span>On this page</span>
-        </div>
-        <nav aria-label="Table of contents" className="relative pl-5">
-          <div className="bg-border absolute top-1 bottom-1 left-0 w-px" />
+      <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-hidden">
+        <nav
+          ref={navRef}
+          aria-labelledby="table-of-contents-title"
+          className="border-border/80 relative border-l pl-4 text-sm"
+        >
           <div
-            className="bg-primary absolute top-1 left-0 w-px transition-[height] duration-200"
-            style={{ height: `calc(${progress}% - 0.25rem)` }}
+            className="bg-primary absolute left-[-1px] h-[18px] w-0.5 rounded-full opacity-100 transition-[top,opacity] duration-200 ease-out"
+            style={{ top: markerTop }}
             aria-hidden="true"
           />
-          <ul className="flex flex-col gap-1.5">
-            {items.map((item) => {
-              const isActive = item.id === activeId;
-
-              return (
-                <li key={item.id}>
-                  <a
-                    href={`#${item.id}`}
-                    aria-current={isActive ? "location" : undefined}
-                    className={cn(
-                      "relative block py-1 text-sm leading-5 transition-colors",
-                      item.depth === 3 && "pl-4",
-                      isActive
-                        ? "text-primary font-medium"
-                        : "text-foreground/45 hover:text-foreground/80",
-                    )}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      document.getElementById(item.id)?.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      });
-                      window.history.replaceState(null, "", `#${item.id}`);
-                    }}
-                  >
-                    <span
-                      className={cn(
-                        "absolute top-1/2 -left-[1.45rem] size-1.5 -translate-y-1/2 rounded-full transition-all",
-                        isActive
-                          ? "bg-primary scale-100 opacity-100"
-                          : "bg-border scale-75 opacity-0",
-                      )}
-                      aria-hidden="true"
-                    />
-                    {item.text}
-                  </a>
-                </li>
-              );
-            })}
-          </ul>
+          <div
+            id="table-of-contents-title"
+            className="text-foreground mb-1 h-8 truncate text-sm leading-8 font-medium"
+          >
+            On this page
+          </div>
+          <TocItems items={items} activeId={activeId} root />
         </nav>
       </div>
     </aside>
+  );
+}
+
+function TocItems({
+  items,
+  activeId,
+  root = false,
+}: {
+  items: TocItem[];
+  activeId?: string;
+  root?: boolean;
+}) {
+  return (
+    <ul className={cn("relative z-10", !root && "pl-4")}>
+      {items.map((item) => {
+        const isActive = item.id === activeId;
+
+        return (
+          <li key={item.id}>
+            <a
+              href={`#${item.id}`}
+              title={item.text}
+              aria-current={isActive ? "location" : undefined}
+              className={cn(
+                "block h-8 truncate leading-8 font-normal transition-colors duration-200",
+                isActive
+                  ? "text-foreground"
+                  : "text-foreground/50 hover:text-foreground/80",
+              )}
+              onClick={(event) => {
+                event.preventDefault();
+                document.getElementById(item.id)?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                });
+                window.history.replaceState(null, "", `#${item.id}`);
+              }}
+            >
+              {item.text}
+            </a>
+            {item.children.length > 0 ? (
+              <TocItems items={item.children} activeId={activeId} />
+            ) : null}
+          </li>
+        );
+      })}
+    </ul>
   );
 }
