@@ -1,7 +1,7 @@
 {
   "name": "minimalist-portfolio",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Vite + React Router minimalist portfolio, deployed on Cloudflare Workers.",
   "type": "module",
   "scripts": {
@@ -14,9 +14,11 @@
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.33.0",
+    "@gsap/react": "^2.1.2",
     "@mdx-js/react": "^3.1.1",
     "@tabler/icons-react": "^3.41.1",
     "clsx": "^2.1.1",
+    "gsap": "^3.15.0",
     "motion": "^12.38.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",

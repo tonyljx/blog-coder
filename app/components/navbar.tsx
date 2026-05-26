@@ -13,6 +13,7 @@ const links = [
   { title: "Home", href: "/" },
   { title: "Inspiration", href: "/inspiration" },
   { title: "Blog", href: "/blog" },
+  { title: "Flashcards", href: "/flashcards" },
 ];
 
 export const Navbar = () => {

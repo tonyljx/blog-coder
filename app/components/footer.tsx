@@ -1,11 +1,13 @@
 import Container from "./container";
 import { ExternalLink } from "./external-link";
 
+const SHOW_SIGNATURE = false;
+
 export const Footer = () => {
   return (
     <Container className="pb-10">
       <footer className="my-8 flex flex-col items-center gap-4">
-        <Signature />
+        {SHOW_SIGNATURE ? <Signature /> : null}
         <div className="flex flex-col items-center gap-1.5">
           <p className="text-foreground/40 text-center text-sm text-balance">
             Built by yours truly. Here's the{" "}

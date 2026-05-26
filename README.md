@@ -19,13 +19,13 @@
 
 ## 功能
 
-- **主页**：自我介绍、Things I do、合作过的公司、Work with me（含点击复制邮箱的动画提示）、最新文章列表、带签名手写动画的页脚。
+- **主页**：自我介绍、Things I do、合作过的公司、Work with me（含点击复制邮箱的动画提示）、最新文章列表和页脚。
 - **博客**：`/blog` 列表页 + `/blog/:slug` 详情页。文章通过服务端 `loader` 加载，未知 slug 会返回 404。
 - **代码块**：MDX fenced code block 通过 Shiki 在构建阶段完成语法高亮，支持 light/dark 双主题 token。
 - **导航**：当前路由高亮（虚线下划线），其余页面（Tweets / Inspiration / Sponsor）目前为占位页。
 - **SSR**：所有页面服务端渲染，首屏直出 HTML，利于 SEO。
 - **Logo 来源**：工具和技术栈 logo 选自 [SVGL](https://svgl.app/)，并以内联 React SVG 组件放在 `app/components/icons/tech-stack.tsx`。
-- **手写 SVG 来源**：页脚签名动画由 [Hand Writing SVG Generator](https://hand-writing-svg-generator.void.app/) 生成。
+- **手写 SVG 来源**：页脚签名 SVG 当前隐藏；保留的动画由 [Hand Writing SVG Generator](https://hand-writing-svg-generator.void.app/) 生成。
 
 ## 目录结构
 
