@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1] - 2026-05-26
+
+### Changed
+
+- 首页 "Things I do" 精简为单一条目，指向新上线的 Flashcards 工具：使用 `<Link viewTransition>` 走内部路由，文案 "借助 Anki 风格的卡片帮我把读过的内容真正记住。"
+- 移除模板残留的 Aceternity / Aceternity UI / YouTube 条目和未使用的 `LogoSVGNew` 组件。
+
 ## [0.2.0] - 2026-05-26
 
 ### Added
