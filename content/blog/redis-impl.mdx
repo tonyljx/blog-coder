@@ -13,6 +13,22 @@ summary: "The handful of topics that come up in almost every front-end interview
 - 哈希：hash
 - 跳表：skiplist
 
+结构总览：
+
+```mermaid
+flowchart TD
+  RedisObject["Redis 对象"] --> SDS["简单字符串 SDS"]
+  RedisObject --> List["链表 list/listNode"]
+  RedisObject --> Dict["字典 dictht/dictEntry"]
+  RedisObject --> ZSet["有序集合 zset"]
+
+  SDS --> SDSUse["len + free + buf[]"]
+  List --> ListUse["head + tail + len"]
+  Dict --> DictUse["table[] + 链地址法"]
+  ZSet --> ZSetDict["dict: member -> score"]
+  ZSet --> ZSetSkiplist["skiplist: 按 score 有序"]
+```
+
 
 
 # sds
@@ -27,6 +43,17 @@ typedef struct sdshdr {
   int free;
   char buff[]
 }
+```
+
+```mermaid
+flowchart LR
+  SDS["sdshdr"] --> Len["len: 已使用长度"]
+  SDS --> Free["free: 预留空间"]
+  SDS --> Buf["buf[]: 字节数组"]
+
+  Len --> O1["获取长度 O(1)"]
+  Free --> Prealloc["减少扩容次数"]
+  Buf --> Data["真实字符串内容"]
 ```
 
 
@@ -60,6 +87,23 @@ typedef struct list {
   listNode * tail;
   unsigned long len;
 }
+```
+
+```mermaid
+flowchart LR
+  List["list"] --> Head["head"]
+  List --> Tail["tail"]
+  List --> Len["len"]
+
+  Head --> N1["listNode A"]
+  N1 <--> N2["listNode B"]
+  N2 <--> N3["listNode C"]
+  Tail --> N3
+
+  N1 --> V1["val"]
+  N2 --> V2["val"]
+  N3 --> V3["val"]
+  Len --> O1["长度查询 O(1)"]
 ```
 
 
@@ -98,6 +142,46 @@ typedef struct dictEntry {
   }
   struct dictEntry * next
 }
+```
+
+```mermaid
+flowchart TD
+  Dictht["dictht"] --> Table["table: dictEntry*[]"]
+  Dictht --> Size["size"]
+  Dictht --> SizeMask["sizeMask"]
+  Dictht --> Used["used"]
+
+  Table --> Bucket0["bucket 0"]
+  Table --> Bucket1["bucket 1"]
+  Table --> Bucket2["bucket 2"]
+
+  Bucket1 --> EntryA["dictEntry: key/value"]
+  EntryA --> EntryB["dictEntry: key/value"]
+  EntryB --> Null["NULL"]
+
+  SizeMask --> Index["hash(key) & sizeMask"]
+  Index --> Bucket1
+  Used --> RehashCheck["判断是否需要 rehash"]
+```
+
+```mermaid
+flowchart LR
+  subgraph OldTable["ht[0] 旧表"]
+    OldBucket["bucket 链表"]
+  end
+
+  subgraph NewTable["ht[1] 新表"]
+    NewBucket["bucket 链表"]
+  end
+
+  Trigger["used/size 到达阈值"] --> Alloc["分配 ht[1]"]
+  Alloc --> NewTable
+  Write["新增 key"] --> NewBucket
+  Step["每次操作顺手迁移一部分 bucket"] --> Move["从 ht[0] 搬到 ht[1]"]
+  OldBucket --> Move --> NewBucket
+  Query["查询/更新 key"] --> Lookup["同时查 ht[0] 和 ht[1]"]
+  Lookup --> OldTable
+  Lookup --> NewTable
 ```
 
 
@@ -141,6 +225,16 @@ typedef struct zskiplistNode {
 } zskiplistNode;
 ```
 
+```mermaid
+flowchart LR
+  ZSet["zset"] --> Dict["dict"]
+  ZSet --> ZSL["zskiplist"]
+
+  Dict --> DictQuery["member -> score, O(1)"]
+  ZSL --> RangeQuery["按 score/rank 范围查询, O(log n) 起步"]
+  ZSL --> Ordered["节点按 score 有序"]
+```
+
 
 
 
@@ -149,11 +243,22 @@ typedef struct zskiplistNode {
 
 
 
-```
-level 3: header ----------------------------------------> D
-level 2: header -------------------> B ----------------> D
-level 1: header ---------> A ------> B ------> C ------> D
-level 0: header -> A -> B -> C -> D
+```mermaid
+flowchart LR
+  H3["level 3: header"] -- "span=4" --> D3["D"]
+
+  H2["level 2: header"] -- "span=2" --> B2["B"]
+  B2 -- "span=2" --> D2["D"]
+
+  H1["level 1: header"] -- "span=1" --> A1["A"]
+  A1 -- "span=1" --> B1["B"]
+  B1 -- "span=1" --> C1["C"]
+  C1 -- "span=1" --> D1["D"]
+
+  H0["level 0: header"] --> A0["A"]
+  A0 --> B0["B"]
+  B0 --> C0["C"]
+  C0 --> D0["D"]
 ```
 
 
