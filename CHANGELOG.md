@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.2] - 2026-05-27
+
+### Added
+
+- 首页 "技术栈" 分组在 `JS / TS`、`Java` 之后追加 `Markdown` 条目，描述为"用来和 AI 表达需求 / 沉淀对话。"，并新增 `MarkdownIcon`（使用 currentColor 描边的官方 Markdown 标记）。
+
 ## [0.2.1] - 2026-05-26
 
 ### Changed

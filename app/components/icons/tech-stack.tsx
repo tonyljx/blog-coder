@@ -130,6 +130,25 @@ export const TypeScriptIcon = (props: SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+export const MarkdownIcon = (props: SVGProps<SVGSVGElement>) => (
+  <svg {...props} viewBox="0 0 208 128" preserveAspectRatio="xMidYMid">
+    <rect
+      width="198"
+      height="118"
+      x="5"
+      y="5"
+      ry="10"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="10"
+    />
+    <path
+      fill="currentColor"
+      d="M30 98V30h20l20 25 20-25h20v68H90V59L70 84 50 59v39zm125 0l-30-33h20V30h20v35h20z"
+    />
+  </svg>
+);
+
 export const JavaIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg {...props} preserveAspectRatio="xMidYMid" viewBox="0 0 256 346">
     <path

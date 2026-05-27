@@ -3,6 +3,7 @@ import { Box } from "./box";
 import {
   ClaudeAiIcon,
   JavaIcon,
+  MarkdownIcon,
   OpenAiIcon,
   TypeScriptIcon,
   VSCodeIcon,
@@ -52,6 +53,14 @@ export const Companies = () => {
       boxClassName:
         "bg-linear-to-b from-orange-50 to-sky-50 ring-offset-[#E76F00]",
       iconClassName: "h-6 w-5",
+    },
+    {
+      title: "Markdown",
+      description: "用来和 AI 表达需求 / 沉淀对话。",
+      icon: MarkdownIcon,
+      boxClassName:
+        "bg-linear-to-b from-neutral-50 to-neutral-200 text-neutral-800 ring-offset-neutral-500",
+      iconClassName: "h-3 w-5",
     },
   ];
 
