@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.2.3] - 2026-05-27
+
+### Added
+
+- MDX 代码块支持 Mermaid 渲染：识别 `language-mermaid`，按需加载 `mermaid@^11.15.0`，将文章里的 Mermaid 源码渲染为 SVG 图表。
+- Mermaid 图表新增右上角全屏查看入口，使用 GSAP / `@gsap/react` 实现打开与关闭动效；弹框会按图表尺寸自适应，并在大图超出视口时仅让图表区域滚动。
+
+### Changed
+
+- `redis-impl` 文章里的链表、字典、跳表等 Mermaid 图改为更贴近 Redis 数据结构的图解版本，突出节点字段、指针关系、哈希桶链地址法和跳表层高。
+
+### Fixed
+
+- 关闭 Mermaid 全屏查看时保留原文档位置的占位高度，避免原 SVG 临时移除后导致页面出现轻微布局偏移。
+- 补齐 Table of Contents 的类型标注，避免新增 MDX 代码块处理逻辑后触发 TypeScript 推断问题。
+
 ## [0.2.2] - 2026-05-27
 
 ### Added

@@ -142,6 +142,27 @@ html {
     min-width: max-content;
   }
 
+  .mermaid-diagram svg {
+    height: auto;
+    max-width: 100%;
+  }
+
+  .mermaid-diagram-fullscreen {
+    width: fit-content;
+    max-width: calc(100vw - 1.5rem);
+    max-height: calc(100vh - 1.5rem);
+  }
+
+  .mermaid-diagram-fullscreen svg {
+    display: block;
+    width: min(
+      var(--mermaid-fullscreen-width, 100%),
+      calc(100vw - 6rem)
+    ) !important;
+    max-width: none;
+    max-height: calc(100vh - 6rem);
+  }
+
   .dark .shiki,
   .dark .shiki span {
     background-color: var(--shiki-dark-bg) !important;

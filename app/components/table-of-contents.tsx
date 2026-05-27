@@ -26,7 +26,7 @@ function uniqueSlug(base: string, seen: Map<string, number>) {
   return count === 0 ? base : `${base}-${count + 1}`;
 }
 
-function collectHeadings(selector: string) {
+function collectHeadings(selector: string): TocItem[] {
   const article = document.querySelector<HTMLElement>(selector);
   if (!article) return [];
 
@@ -43,12 +43,14 @@ function collectHeadings(selector: string) {
       const id = heading.id || uniqueSlug(slugifyHeading(text, index), seen);
       heading.id = id;
 
-      return {
+      const item: TocItem = {
         id,
         text,
         depth: Number(heading.tagName.slice(1)) as 2 | 3 | 4,
         children: [],
       };
+
+      return item;
     })
     .filter((item): item is TocItem => Boolean(item));
 }
@@ -58,7 +60,7 @@ function buildTree(items: TocItem[]) {
   const stack: TocItem[] = [];
 
   for (const item of items) {
-    const node = { ...item, children: [] };
+    const node: TocItem = { ...item, children: [] };
 
     while (stack.length > 0 && stack[stack.length - 1].depth >= node.depth) {
       stack.pop();

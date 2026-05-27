@@ -23,6 +23,7 @@ export default defineConfig({
           [
             rehypeShiki,
             {
+              addLanguageClass: true,
               themes: {
                 light: "github-light",
                 dark: "github-dark",

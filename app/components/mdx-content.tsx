@@ -4,6 +4,7 @@ import type {
 } from "react";
 import { Link } from "react-router";
 import type { MDXComponents } from "mdx/types";
+import { MermaidDiagram } from "~/components/mermaid-diagram";
 import { cn } from "~/lib/utils";
 
 function isInternalLink(href?: string) {
@@ -40,6 +41,41 @@ function MdxLink({
       {...props}
     />
   );
+}
+
+function extractTextFromNode(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") {
+    return String(node);
+  }
+
+  if (Array.isArray(node)) {
+    return node.map(extractTextFromNode).join("");
+  }
+
+  if (node && typeof node === "object" && "props" in node) {
+    const props = node.props as { children?: ReactNode };
+    return extractTextFromNode(props.children);
+  }
+
+  return "";
+}
+
+function getCodeBlockLanguage(node: ReactNode): string | undefined {
+  if (Array.isArray(node)) {
+    for (const child of node) {
+      const language = getCodeBlockLanguage(child);
+      if (language) return language;
+    }
+  }
+
+  if (!node || typeof node !== "object" || !("props" in node)) {
+    return undefined;
+  }
+
+  const props = node.props as { className?: string };
+  const match = props.className?.match(/\blanguage-([^\s]+)/);
+
+  return match?.[1];
 }
 
 export const mdxComponents: MDXComponents = {
@@ -125,15 +161,23 @@ export const mdxComponents: MDXComponents = {
       </code>
     );
   },
-  pre: ({ className, ...props }) => (
-    <pre
-      className={cn(
-        "bg-muted/80 border-border overflow-x-auto rounded-md border p-4 text-sm leading-6",
-        className,
-      )}
-      {...props}
-    />
-  ),
+  pre: ({ className, children, ...props }) => {
+    if (getCodeBlockLanguage(children) === "mermaid") {
+      return <MermaidDiagram chart={extractTextFromNode(children)} />;
+    }
+
+    return (
+      <pre
+        className={cn(
+          "bg-muted/80 border-border overflow-x-auto rounded-md border p-4 text-sm leading-6",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </pre>
+    );
+  },
   hr: ({ className, ...props }) => (
     <hr className={cn("border-border my-8", className)} {...props} />
   ),

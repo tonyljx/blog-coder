@@ -91,19 +91,23 @@ typedef struct list {
 
 ```mermaid
 flowchart LR
-  List["list"] --> Head["head"]
-  List --> Tail["tail"]
-  List --> Len["len"]
+  List["list\nhead\ntail\nlen = 3"]
+  A["listNode A\nprev = NULL\nnext -> B\nvalue = ..."]
+  B["listNode B\nprev -> A\nnext -> C\nvalue = ..."]
+  C["listNode C\nprev -> B\nnext = NULL\nvalue = ..."]
+  NullL["NULL"]
+  NullR["NULL"]
 
-  Head --> N1["listNode A"]
-  N1 <--> N2["listNode B"]
-  N2 <--> N3["listNode C"]
-  Tail --> N3
+  List -- "head" --> A
+  List -- "tail" --> C
+  List -- "len" --> Len["3, O(1)"]
 
-  N1 --> V1["val"]
-  N2 --> V2["val"]
-  N3 --> V3["val"]
-  Len --> O1["长度查询 O(1)"]
+  NullL -. "prev" .-> A
+  A -- "next" --> B
+  B -- "next" --> C
+  C -- "next" --> NullR
+  C -. "prev" .-> B
+  B -. "prev" .-> A
 ```
 
 
@@ -145,23 +149,28 @@ typedef struct dictEntry {
 ```
 
 ```mermaid
-flowchart TD
-  Dictht["dictht"] --> Table["table: dictEntry*[]"]
-  Dictht --> Size["size"]
-  Dictht --> SizeMask["sizeMask"]
-  Dictht --> Used["used"]
+flowchart LR
+  HT["dictht\n table\n size = 4\n sizemask = 3\n used = 2"]
 
-  Table --> Bucket0["bucket 0"]
-  Table --> Bucket1["bucket 1"]
-  Table --> Bucket2["bucket 2"]
+  subgraph Table["dictEntry* table[4]"]
+    direction TB
+    B0["bucket[0]"]
+    B1["bucket[1]"]
+    B2["bucket[2]"]
+    B3["bucket[3]"]
+  end
 
-  Bucket1 --> EntryA["dictEntry: key/value"]
-  EntryA --> EntryB["dictEntry: key/value"]
-  EntryB --> Null["NULL"]
+  HT -- "table 指针" --> B0
+  HT -- "hash(key) & sizemask" --> Index["定位 bucket 下标"]
+  Index --> B3
 
-  SizeMask --> Index["hash(key) & sizeMask"]
-  Index --> Bucket1
-  Used --> RehashCheck["判断是否需要 rehash"]
+  B0 --> Null0["NULL"]
+  B1 --> Entry1["dictEntry\nkey: k1\nvalue: v1\nnext"]
+  Entry1 --> Null1["NULL"]
+  B2 --> Null2["NULL"]
+  B3 --> Entry3A["dictEntry\nkey: k2\nvalue: v2\nnext"]
+  Entry3A --> Entry3B["dictEntry\nkey: k3\nvalue: v3\nnext"]
+  Entry3B --> Null3["NULL"]
 ```
 
 ```mermaid
@@ -227,12 +236,26 @@ typedef struct zskiplistNode {
 
 ```mermaid
 flowchart LR
-  ZSet["zset"] --> Dict["dict"]
-  ZSet --> ZSL["zskiplist"]
+  ZSL["zskiplist\nheader\ntail\nlevel = 4\nlength = 3"]
+  Header["header\nlevel[3]\nlevel[2]\nlevel[1]\nlevel[0]"]
+  A["zskiplistNode A\nlevel[0]\nbackward = NULL\nscore = 1.0\nobj = o1"]
+  B["zskiplistNode B\nlevel[1]\nlevel[0]\nbackward -> A\nscore = 2.0\nobj = o2"]
+  C["zskiplistNode C\nlevel[3]\nlevel[2]\nlevel[1]\nlevel[0]\nbackward -> B\nscore = 3.0\nobj = o3"]
+  Null["NULL"]
 
-  Dict --> DictQuery["member -> score, O(1)"]
-  ZSL --> RangeQuery["按 score/rank 范围查询, O(log n) 起步"]
-  ZSL --> Ordered["节点按 score 有序"]
+  ZSL -- "header" --> Header
+  ZSL -- "tail" --> C
+
+  Header -- "level[0].forward, span=1" --> A
+  A -- "level[0].forward" --> B
+  B -- "level[0].forward" --> C
+  C -- "forward" --> Null
+
+  Header -- "level[1].forward, span=2" --> B
+  Header -- "level[3].forward, span=3" --> C
+
+  C -. "backward" .-> B
+  B -. "backward" .-> A
 ```
 
 
