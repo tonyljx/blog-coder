@@ -17,7 +17,7 @@ export const WorkWithMe = () => {
     {
       title: "Consultation",
       description: "Get on a paid call with me to discuss your things.",
-      href: "https://cal.com/runningpig-pmtfab",
+      href: "https://cal.com/runningpig-pmtfab/chat",
       boxClassName:
         "bg-linear-to-b from-blue-400 to-blue-600 ring-offset-blue-500",
       skeleton: (
