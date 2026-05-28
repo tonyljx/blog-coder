@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.5] - 2026-05-28
+
+### Added
+
+- **Resume 简历页** — 新增 `/resume` 顶层导航入口：
+  - 从本地 PDF 简历整理结构化内容，按当前博客的窄栏、分隔线、mono 日期和轻量列表样式展示工作经历、项目经历、技能、教育与自我评价。
+  - 将原始 PDF 放到 `public/resume/liang-jiongxin-ai-fullstack.pdf`，页面首屏提供“下载 PDF”按钮，方便对外联系时直接下载简历。
+
 ## [0.2.4] - 2026-05-28
 
 ### Added
