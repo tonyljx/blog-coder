@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.1] - 2026-05-28
+
+### Changed
+
+- 导航栏标题去掉 "Aka RunningDog" 副名，只保留 "Tony Liang"。
+
 ## [0.3.0] - 2026-05-28
 
 ### Added
