@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.6] - 2026-05-28
+
+### Changed
+
+- 导航栏间距微调：tabs 之间 `gap-4` → `gap-6`，让 Home / Inspiration / Blog / Resume / Flashcards 之间多一点呼吸感；导航栏增加底部 padding（`pb-6 md:pb-8`），让下方介绍/内容不再贴着导航。
+
 ## [0.2.5] - 2026-05-28
 
 ### Added

@@ -1,7 +1,7 @@
 {
   "name": "minimalist-portfolio",
   "private": true,
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Vite + React Router minimalist portfolio, deployed on Cloudflare Workers.",
   "type": "module",
   "scripts": {

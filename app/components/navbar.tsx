@@ -21,7 +21,7 @@ export const Navbar = () => {
   const { pathname } = useLocation();
 
   return (
-    <nav className="mx-auto flex max-w-2xl flex-col items-start gap-4 px-4 pt-4 perspective-distant md:pt-8">
+    <nav className="mx-auto flex max-w-2xl flex-col items-start gap-4 px-4 pt-4 pb-6 perspective-distant md:pt-8 md:pb-8">
       <div className="flex items-center gap-2 perspective-distant">
         <motion.div
           variants={GENERAL_VARIANT}
@@ -44,7 +44,7 @@ export const Navbar = () => {
           <span className="font-normal italic">RunningDog</span>
         </h1>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-6">
         {links.map((link) => {
           const active = isActivePath(pathname, link.href);
           return (
