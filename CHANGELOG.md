@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.2.4] - 2026-05-28
+
+### Added
+
+- **Inspiration 信息流** — 把 `/inspiration` 占位 tab 升级为真正的想法流：
+  - 新增 `content/inspirations/*.mdx` 内容目录，frontmatter 仅需 `title` 与 `publishedAt`，正文支持完整 MDX（列表、代码块、链接、Mermaid）。
+  - 新增 `app/lib/inspirations.ts`，复用 `import.meta.glob` 模式按时间倒序加载所有条目。
+  - `app/routes/inspiration.tsx` 改为 Container + Subheading + 单纵列卡片布局，每条复用 `mdxComponents` 渲染正文，日期沿用与 `/blog` 一致的 `DD-MM-YYYY` mono 样式。
+  - 首条种子：`Eat Your Own Dog Food` — 做自己产品的用户。
+
 ## [0.2.3] - 2026-05-27
 
 ### Added
