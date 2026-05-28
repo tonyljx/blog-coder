@@ -20,7 +20,7 @@ export const Work = () => {
             />
           </Box>
           <p className="text-foreground font-medium">Flashcards</p>
-          <div className="hidden size-1 rounded-full bg-neutral-200 md:block" />
+          <div className="hidden size-1 rounded-full bg-neutral-200 md:block dark:bg-neutral-700" />
           <p className="text-foreground/70">
             借助 Anki 风格的卡片帮我把读过的内容真正记住。
           </p>

@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router";
 import { GENERAL_VARIANT, SPRING_CONFIG } from "~/lib/motion-config";
 import { cn } from "~/lib/utils";
 import { DottedUnderline } from "./dotted-underline";
+import { ThemeToggle } from "./theme-toggle";
 
 function isActivePath(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
@@ -44,29 +45,34 @@ export const Navbar = () => {
           <span className="font-normal italic">RunningDog</span>
         </h1>
       </div>
-      <div className="flex items-center gap-6">
-        {links.map((link) => {
-          const active = isActivePath(pathname, link.href);
-          return (
-            <Link
-              key={link.href}
-              to={link.href}
-              viewTransition
-              className={cn(
-                "group relative transition-colors",
-                active ? "text-primary" : "text-foreground/70 hover:text-primary",
-              )}
-            >
-              {link.title}
-              <DottedUnderline
+      <div className="flex w-full items-center justify-between">
+        <div className="flex items-center gap-6">
+          {links.map((link) => {
+            const active = isActivePath(pathname, link.href);
+            return (
+              <Link
+                key={link.href}
+                to={link.href}
+                viewTransition
                 className={cn(
-                  "mask-x-from-90% transition-opacity duration-300",
-                  active ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+                  "group relative transition-colors",
+                  active
+                    ? "text-primary"
+                    : "text-foreground/70 hover:text-primary",
                 )}
-              />
-            </Link>
-          );
-        })}
+              >
+                {link.title}
+                <DottedUnderline
+                  className={cn(
+                    "mask-x-from-90% transition-opacity duration-300",
+                    active ? "opacity-100" : "opacity-0 group-hover:opacity-100",
+                  )}
+                />
+              </Link>
+            );
+          })}
+        </div>
+        <ThemeToggle />
       </div>
     </nav>
   );

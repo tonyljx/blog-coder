@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.0] - 2026-05-28
+
+### Added
+
+- **日间 / 夜间模式切换** — 导航栏右侧新增 sun ↔ moon 切换按钮：
+  - 点击触发 **View Transitions API 圆形扩散**：新主题从按钮位置画圆形 clip-path 覆盖全屏（480ms cubic-bezier），不支持 API 的旧浏览器或 `prefers-reduced-motion` 下自动瞬切。
+  - 图标用 `motion` spring 做 crossfade（stiffness 500 / damping 24），exit 与 enter 重叠以加快感知速度；按钮自身配 `whileHover` / `whileTap` spring，按下有回弹反馈。
+  - 三态状态机：System（首次访问跟随 OS `prefers-color-scheme`）/ Light / Dark；点击后锁定为 light/dark，写入 `localStorage`；System 模式下监听 OS 主题变更实时更新。
+  - 防 FOUC：`<head>` 注入压缩版同步阻塞 inline script，React hydration 之前已设好 `<html class="dark">`；`<html>` 加 `suppressHydrationWarning` 避免 React 19 属性警告。
+  - 路由切换的 view transitions 与主题切换共存：主题切换通过 `[data-vt-type="theme"]` 数据属性作用域化 keyframes，不干扰路由 fade。
+  - 新增 `docs/theme-switch.md`，记录可选方案、选型理由（A + B1 + β）、状态机与验证清单。
+
+### Fixed
+
+- `app/components/work.tsx` 与 `work-with-me.tsx` 里 `bg-neutral-200` 分隔点在 dark 模式下不可见，加 `dark:bg-neutral-700`。
+
 ## [0.2.6] - 2026-05-28
 
 ### Changed

@@ -52,7 +52,7 @@ export const WorkWithMe = () => {
             <p className="text-foreground shrink-0 font-medium">
               {item.title}
             </p>
-            <div className="hidden size-1 rounded-full bg-neutral-200 md:block"></div>
+            <div className="hidden size-1 rounded-full bg-neutral-200 md:block dark:bg-neutral-700"></div>
             <p className="text-foreground/70">{item.description}</p>
           </a>
         ))}

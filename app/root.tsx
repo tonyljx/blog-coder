@@ -12,6 +12,9 @@ import {
 import "./app.css";
 import { Navbar } from "~/components/navbar";
 import { Footer } from "~/components/footer";
+import { ThemeProvider } from "~/lib/theme";
+
+const THEME_INIT_SCRIPT = `(function(){try{var s=localStorage.getItem('theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=s||'system';var r=t==='system'?(d?'dark':'light'):t;if(r==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`;
 
 export function links() {
   return [
@@ -31,10 +34,11 @@ export function links() {
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="font-sans antialiased">
+    <html lang="en" className="font-sans antialiased" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <Meta />
         <Links />
       </head>
@@ -49,13 +53,13 @@ export function Layout({ children }: { children: ReactNode }) {
 
 export default function App() {
   return (
-    <>
+    <ThemeProvider>
       <Navbar />
       <main>
         <Outlet />
       </main>
       <Footer />
-    </>
+    </ThemeProvider>
   );
 }
 
