@@ -15,6 +15,19 @@ import { Footer } from "~/components/footer";
 import { ThemeProvider } from "~/lib/theme";
 
 const THEME_INIT_SCRIPT = `(function(){try{var s=localStorage.getItem('theme');var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var t=s||'system';var r=t==='system'?(d?'dark':'light'):t;if(r==='dark')document.documentElement.classList.add('dark');}catch(e){}})();`;
+const PLAUSIBLE_DOMAIN = "blog.codertony.com";
+const PLAUSIBLE_SCRIPT_SRC =
+  "https://plausible-analytics-ce-production-2ebc.up.railway.app/js/script.pageview-props.tagged-events.js";
+
+function PlausibleAnalytics() {
+  return (
+    <script
+      defer
+      data-domain={PLAUSIBLE_DOMAIN}
+      src={PLAUSIBLE_SCRIPT_SRC}
+    />
+  );
+}
 
 export function links() {
   return [
@@ -39,6 +52,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <PlausibleAnalytics />
         <Meta />
         <Links />
       </head>
