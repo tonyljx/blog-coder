@@ -20,7 +20,7 @@ type BlogPostModule = {
 };
 
 const postModules = import.meta.glob<BlogPostModule>(
-  "../../content/blog/*.mdx",
+  "../../content/blog/*.{md,mdx}",
   { eager: true },
 );
 
@@ -32,7 +32,7 @@ function getSlug(path: string, explicitSlug?: string) {
     throw new Error(`Unable to infer blog post slug from path: ${path}`);
   }
 
-  return fileName.replace(/\.mdx$/, "");
+  return fileName.replace(/\.mdx?$/, "");
 }
 
 function createPost(path: string, module: BlogPostModule): BlogPost {
