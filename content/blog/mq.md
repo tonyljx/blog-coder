@@ -45,27 +45,42 @@ summary: "关于消息队列,kafka 架构"
 关系图：producer、broker、topic、partition
 
 ```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 70, "rankSpacing": 95, "curve": "basis"}, "themeVariables": {"edgeLabelBackground": "#ffffff"}}}%%
 flowchart LR
   Producer["Producer\n生产者"]
-  Topic["Topic: order_events\n逻辑上的消息分类"]
+  Topic["Topic\norder_events\n逻辑消息分类"]
+  Router{"Partition Router\n按 key / 策略\n选择分区"}
 
   subgraph Cluster["Kafka Cluster"]
-    direction LR
+    direction TB
 
-    subgraph B1["Broker 1\n服务节点"]
-      P0["Partition 0\n追加日志 + offset"]
-      P2["Partition 2\n追加日志 + offset"]
+    subgraph B1["Broker 1"]
+      direction TB
+      P0["Partition 0\n追加日志\noffset"]
+      P2["Partition 2\n追加日志\noffset"]
     end
 
-    subgraph B2["Broker 2\n服务节点"]
-      P1["Partition 1\n追加日志 + offset"]
+    subgraph B2["Broker 2"]
+      direction TB
+      P1["Partition 1\n追加日志\noffset"]
     end
   end
 
-  Producer -->|send message| Topic
-  Topic -. "由多个 partition 组成" .-> P0
-  Topic -. "由多个 partition 组成" .-> P1
-  Topic -. "由多个 partition 组成" .-> P2
+  Producer -->|"写入"| Topic
+  Topic -->|"路由"| Router
+  Router --> P0
+  Router --> P1
+  Router --> P2
+
+  classDef producer fill:#eef6ff,stroke:#2563eb,stroke-width:1.5px,color:#0f172a;
+  classDef topic fill:#fff7ed,stroke:#ea580c,stroke-width:1.5px,color:#0f172a;
+  classDef router fill:#f8fafc,stroke:#64748b,stroke-width:1.5px,color:#0f172a;
+  classDef partition fill:#ecfdf5,stroke:#059669,stroke-width:1.5px,color:#0f172a;
+
+  class Producer producer;
+  class Topic topic;
+  class Router router;
+  class P0,P1,P2 partition;
 ```
 
 记忆方式：
@@ -92,31 +107,45 @@ flowchart LR
 关系图：consumer、consumer group
 
 ```mermaid
+%%{init: {"flowchart": {"nodeSpacing": 70, "rankSpacing": 90, "curve": "basis"}, "themeVariables": {"edgeLabelBackground": "#ffffff"}}}%%
 flowchart TD
-  Topic2["Topic: order_events"] --> P0b["Partition 0"]
-  Topic2 --> P1b["Partition 1"]
-  Topic2 --> P2b["Partition 2"]
+  subgraph T["Topic: order_events"]
+    direction LR
+    P0b["Partition 0"]
+    P1b["Partition 1"]
+    P2b["Partition 2"]
+  end
 
-  subgraph G1["Consumer Group A\n同一组内分摊消费"]
+  subgraph G1["Consumer Group A"]
+    direction LR
     C1["Consumer A-1"]
     C2["Consumer A-2"]
   end
 
-  P0b -->|"分配给"| C1
-  P1b -->|"分配给"| C2
-  P2b -->|"也可以分配给同一个 consumer"| C2
-
-  subgraph G2["Consumer Group B\n另一组独立消费"]
+  subgraph G2["Consumer Group B"]
     C3["Consumer B-1"]
   end
 
-  P0b -. "独立 offset" .-> C3
-  P1b -. "独立 offset" .-> C3
-  P2b -. "独立 offset" .-> C3
+  P0b --> C1
+  P1b --> C2
+  P2b --> C2
+
+  P0b -.-> C3
+  P1b -.-> C3
+  P2b -.-> C3
+
+  classDef partition fill:#ecfdf5,stroke:#059669,stroke-width:1.5px,color:#0f172a;
+  classDef groupA fill:#eef6ff,stroke:#2563eb,stroke-width:1.5px,color:#0f172a;
+  classDef groupB fill:#fff7ed,stroke:#ea580c,stroke-width:1.5px,color:#0f172a;
+
+  class P0b,P1b,P2b partition;
+  class C1,C2 groupA;
+  class C3 groupB;
 ```
 
 消费者组记忆方式：
 
+- 图里的实线表示 Consumer Group A 内部的分摊消费；虚线表示 Consumer Group B 独立消费同一批 partition
 - 同一个 consumer group 内：多个 consumer 是合作关系，大家一起分摊 topic 的 partition
 - 同一个 consumer group 内：一个 partition 同一时刻只会被一个 consumer 消费，避免同组重复消费
 - 一个 consumer 可以消费多个 partition；如果 consumer 数量超过 partition 数量，多出来的 consumer 会空闲
